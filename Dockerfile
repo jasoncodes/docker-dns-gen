@@ -27,7 +27,7 @@ FROM base-$TARGETARCH
 
 ENV DOCKER_HOST unix:///var/run/docker.sock
 
-RUN apk --no-cache add dnsmasq
+RUN apk --no-cache add dnsmasq bind-tools
 
 COPY --from=build build/. /
 

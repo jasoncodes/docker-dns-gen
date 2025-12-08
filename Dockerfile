@@ -25,7 +25,7 @@ RUN curl -L ${JWILDER_DOCKER_GEN_RELEASE} | tar -C /build/usr/local/bin -xz && s
 
 FROM base-$TARGETARCH
 
-ENV DOCKER_HOST unix:///var/run/docker.sock
+ENV DOCKER_HOST=unix:///var/run/docker.sock
 
 RUN apk --no-cache add dnsmasq bind-tools
 

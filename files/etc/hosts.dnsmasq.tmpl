@@ -25,7 +25,8 @@
 {{ $networks_exclude := split (or $.Env.NETWORKS_EXCLUDE "") "," }}
 {{ range $index, $container := $ }}
     {{ template "host" (dict "Container" $container "Host" (print $container.Name) "Tld" $tld "Alias" false "NetworksExclude" $networks_exclude) }}
-    {{ $host_part := split $container.Name "_" }}
+    {{ $host_name := regexReplaceAll "-([^-]+)-([0-9]+)$" $container.Name "_${1}_${2}" }}
+    {{ $host_part := split $host_name "_" }}
     {{ $host_part_len := len $host_part }}
     {{ if eq $host_part_len 3 }}
         {{ template "host" (dict "Container" $container "Host" (print (index $host_part 1) "." (index $host_part 0)) "Tld" $tld) }}

@@ -25,9 +25,9 @@
 {{ $networks_exclude := split (or $.Env.NETWORKS_EXCLUDE "") "," }}
 {{ $compose_only := eq (or ($.Env.COMPOSE_ONLY) "") "true" }}
 {{ range $index, $container := $ }}
-    {{ $dns_include := eq (or (index $container.Labels "dns.include") "") "true" }}
-    {{ $compose_service := eq (or (index $container.Labels "com.docker.compose.oneoff") "") "False" }}
-    {{ if or (not $compose_only) $dns_include $compose_service }}
+    {{- $dns_include := eq (or (index $container.Labels "dns.include") "") "true" }}
+    {{- $compose_service := eq (or (index $container.Labels "com.docker.compose.oneoff") "") "False" }}
+    {{- if or (not $compose_only) $dns_include $compose_service }}
     {{ template "host" (dict "Container" $container "Host" (print $container.Name) "Tld" $tld "Alias" false "NetworksExclude" $networks_exclude) }}
     {{ $host_name := regexReplaceAll "-([^-]+)-([0-9]+)$" $container.Name "_${1}_${2}" }}
     {{ $host_part := split $host_name "_" }}
@@ -47,15 +47,15 @@
             {{ template "host" (dict "Container" $container "Host" $alias "Tld" $tld "Alias" true "NetworksExclude" $networks_exclude) }}
         {{ end }}
     {{ end }}
-    {{ end }}
-{{ end }}
+    {{- end }}
+{{- end }}
 
 {{ range $host, $containers := groupByMulti $ "Env.DOMAIN_NAME" "," }}
-    {{ range $index, $container := $containers }}
-        {{ $dns_include := eq (or (index $container.Labels "dns.include") "") "true" }}
-        {{ $compose_service := eq (or (index $container.Labels "com.docker.compose.oneoff") "") "False" }}
-        {{ if or (not $compose_only) $dns_include $compose_service }}
+    {{- range $index, $container := $containers }}
+        {{- $dns_include := eq (or (index $container.Labels "dns.include") "") "true" }}
+        {{- $compose_service := eq (or (index $container.Labels "com.docker.compose.oneoff") "") "False" }}
+        {{- if or (not $compose_only) $dns_include $compose_service }}
         {{ template "host" (dict "Container" $container "Host" (print $host) "Tld" "") }}
-        {{ end }}
-    {{ end }}
-{{ end }}
+        {{- end }}
+    {{- end }}
+{{- end }}

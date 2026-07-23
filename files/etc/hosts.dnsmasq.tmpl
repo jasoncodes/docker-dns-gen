@@ -3,7 +3,7 @@
     {{ $tld := .Tld }}
     {{ $alias := .Alias }}
     {{ $networks_exclude := .NetworksExclude }}
-    {{ range $index, $network := .Container.Networks }}
+    {{ range $index, $network := sortObjectsByKeysAsc .Container.Networks "Name" }}
         {{ if ne $network.IP "" }}
             {{ if not $alias }}
 {{ $network.IP }} {{ $host }}.{{ $network.Name }}.{{ $tld }}
@@ -24,7 +24,7 @@
 {{ $tld := or ($.Env.DOMAIN_TLD) "docker" }}
 {{ $networks_exclude := split (or $.Env.NETWORKS_EXCLUDE "") "," }}
 {{ $compose_only := eq (or ($.Env.COMPOSE_ONLY) "") "true" }}
-{{ range $index, $container := $ }}
+{{ range $index, $container := sortObjectsByKeysAsc $ "Name" }}
     {{- $dns_include := eq (or (index $container.Labels "dns.include") "") "true" }}
     {{- $compose_service := eq (or (index $container.Labels "com.docker.compose.oneoff") "") "False" }}
     {{- if or (not $compose_only) $dns_include $compose_service }}
@@ -51,7 +51,7 @@
 {{- end }}
 
 {{ range $host, $containers := groupByMulti $ "Env.DOMAIN_NAME" "," }}
-    {{- range $index, $container := $containers }}
+    {{- range $index, $container := sortObjectsByKeysAsc $containers "Name" }}
         {{- $dns_include := eq (or (index $container.Labels "dns.include") "") "true" }}
         {{- $compose_service := eq (or (index $container.Labels "com.docker.compose.oneoff") "") "False" }}
         {{- if or (not $compose_only) $dns_include $compose_service }}

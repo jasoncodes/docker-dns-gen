@@ -44,4 +44,29 @@ To start the container, a command like the following can be used. Additionally, 
 ```bash
 docker run -d --name dns-gen -v /var/run/docker.sock:/var/run/docker.sock 8ear/secure-dns-gen
 ```
+
+### Compose-only mode
+
+By default, dns-gen creates records for every running container. Set
+`COMPOSE_ONLY=true` to create records only for regular Docker Compose services:
+
+```bash
+docker run -d \
+  --name dns-gen \
+  --env COMPOSE_ONLY=true \
+  --volume /var/run/docker.sock:/var/run/docker.sock \
+  8ear/secure-dns-gen
+```
+
+Compose services are identified by the runtime label
+`com.docker.compose.oneoff=False`. This excludes plain `docker run` containers
+and containers started by `docker compose run`.
+
+To include a non-Compose or one-off container while compose-only mode is
+enabled, add the `dns.include=true` label:
+
+```bash
+docker run --label dns.include=true ...
+```
+
 All other commands etc. you can read from the [upstream repository](https://github.com/squarerobot/docker-dns-gen).
